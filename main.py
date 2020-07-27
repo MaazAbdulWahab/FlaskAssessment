@@ -12,7 +12,7 @@ class user(db.Model):
 
     name=db.Column(db.String(30),nullable=False,unique=True, primary_key=True)
     email=db.Column(db.String(50),nullable=False,unique=True)
-    password=db.Column(db.String(30),nullable=False,unique=True)
+    password=db.Column(db.String(30),nullable=False)
 
     def __repr__(self):
         return('USER '+str(self.name)+' '+str(self.email)+' '+str(self.password))
@@ -22,11 +22,12 @@ class user(db.Model):
 class SignIn(Resource):
     def post(self):
         data=request.get_json()
-        name=data['name']
+        email=data['email']
         passw=data['password']
-        list_of_users=user.query.filter_by(name=name,password=passw).all()
+        list_of_users=user.query.filter_by(email=email,password=passw).all()
         if(len(list_of_users)==1):
-            return jsonify({'status':202,'message':f'Hello {name}'})
+            username=list_of_users[0].name
+            return jsonify({'status':202,'message':f'Hello {username}'})
         return jsonify({'status':404,'message':'not found'})
 
 api.add_resource(SignIn,'/login')
